@@ -1,0 +1,28 @@
+version: '3.8'
+services:
+  auth-db:
+    image: mongo
+    container_name: auth-db
+    ports:
+      - '27017:27017'
+
+  crud-db:
+    image: mongo
+    container_name: crud-db
+    ports:
+      - '27018:27017'
+
+  backend:
+    build: ./backend
+    ports:
+      - '5000:5000'
+    depends_on:
+      - auth-db
+      - crud-db
+
+  frontend:
+    build: ./frontend
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
