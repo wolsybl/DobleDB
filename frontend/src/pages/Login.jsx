@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function Login({ onGoToRegister }) {
+export default function Login({ onGoToRegister, onLoginSuccess }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -11,12 +11,13 @@ export default function Login({ onGoToRegister }) {
     setError("");
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/login", {
+      await axios.post("http://localhost:5000/api/auth/login", {
         email,
         password,
       });
 
-      alert("Login exitoso"); // Aquí podrías guardar un token o redirigir
+      // Redirige al dashboard
+      if (onLoginSuccess) onLoginSuccess();
     } catch (err) {
       setError(err.response?.data?.message || "Error al iniciar sesión");
     }
