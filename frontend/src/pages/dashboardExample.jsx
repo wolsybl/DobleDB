@@ -2,7 +2,7 @@ import { useState } from "react";
 
 //interfaz para el dashboard despues de iniciar sesion
 
-export default function Dashboard() {
+export default function Dashboard({ onLogout }) {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState("");
   const [editIndex, setEditIndex] = useState(null);
@@ -34,11 +34,35 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 relative">
+      {/* Botón de logout fuera del card */}
+      <button
+        className="absolute top-6 right-6 bg-white border border-gray-300 rounded-full p-2 shadow hover:bg-gray-50 transition"
+        onClick={onLogout}
+        title="Cerrar sesión"
+      >
+        {/* Icono de logout SVG */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 text-red-500"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H7a2 2 0 01-2-2V7a2 2 0 012-2h4a2 2 0 012 2v1"
+          />
+        </svg>
+      </button>
       <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          Dashboard - To Do List
-        </h2>
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-center text-gray-800 flex-1">
+            Dashboard - To Do List
+          </h2>
+        </div>
         <form onSubmit={handleAddTask} className="flex mb-6">
           <input
             type="text"

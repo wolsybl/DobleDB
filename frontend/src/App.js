@@ -8,7 +8,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   if (isLoggedIn) {
-    return <Dashboard />;
+    return <Dashboard onLogout={() => setIsLoggedIn(false)} />;
   }
 
   return showRegister ? (
