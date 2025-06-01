@@ -1,47 +1,60 @@
-import { useState } from "react";
-
-//interfaz para el dashboard despues de iniciar sesion
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 export default function Dashboard({ onLogout }) {
   const [tasks, setTasks] = useState([]);
   const [input, setInput] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
+  const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
 
-  const handleAddTask = (e) => {
+  // Cargar tareas al iniciar
+  useEffect(() => {
+    fetchTasks();
+  }, []);
+
+  const fetchTasks = async () => {
+    const res = await axios.get("http://localhost:5000/api/tasks");
+    setTasks(res.data);
+  };
+
+  const handleAddTask = async (e) => {
     e.preventDefault();
     if (input.trim() === "") return;
-    setTasks([...tasks, input]);
+
+    const res = await axios.post("http://localhost:5000/api/tasks", {
+      title: input,
+    });
+    setTasks([...tasks, res.data]);
     setInput("");
   };
 
-  const handleDeleteTask = (index) => {
-    setTasks(tasks.filter((_, i) => i !== index));
+  const handleDeleteTask = async (id) => {
+    await axios.delete(`http://localhost:5000/api/tasks/${id}`);
+    setTasks(tasks.filter((t) => t._id !== id));
   };
 
-  const handleEditTask = (index) => {
-    setEditIndex(index);
-    setEditValue(tasks[index]);
+  const handleEditTask = (task) => {
+    setEditId(task._id);
+    setEditValue(task.title);
   };
 
-  const handleSaveEdit = (index) => {
-    if (editValue.trim() === "") return;
-    const updatedTasks = [...tasks];
-    updatedTasks[index] = editValue;
-    setTasks(updatedTasks);
-    setEditIndex(null);
+  const handleSaveEdit = async () => {
+    const res = await axios.put(`http://localhost:5000/api/tasks/${editId}`, {
+      title: editValue,
+    });
+
+    setTasks(tasks.map((t) => (t._id === editId ? res.data : t)));
+    setEditId(null);
     setEditValue("");
   };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 relative">
-      {/* Botón de logout fuera del card */}
       <button
         className="absolute top-6 right-6 bg-white border border-gray-300 rounded-full p-2 shadow hover:bg-gray-50 transition"
         onClick={onLogout}
         title="Cerrar sesión"
       >
-        {/* Icono de logout SVG */}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           className="h-6 w-6 text-red-500"
@@ -57,12 +70,12 @@ export default function Dashboard({ onLogout }) {
           />
         </svg>
       </button>
+
       <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-center text-gray-800 flex-1">
-            Dashboard - To Do List
-          </h2>
-        </div>
+        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+          Dashboard - To Do List
+        </h2>
+
         <form onSubmit={handleAddTask} className="flex mb-6">
           <input
             type="text"
@@ -78,13 +91,14 @@ export default function Dashboard({ onLogout }) {
             Agregar
           </button>
         </form>
+
         <ul>
-          {tasks.map((task, idx) => (
+          {tasks.map((task) => (
             <li
-              key={idx}
+              key={task._id}
               className="flex items-center justify-between mb-3 bg-gray-50 px-4 py-2 rounded-xl"
             >
-              {editIndex === idx ? (
+              {editId === task._id ? (
                 <>
                   <input
                     type="text"
@@ -94,30 +108,30 @@ export default function Dashboard({ onLogout }) {
                   />
                   <button
                     className="text-green-600 mr-2"
-                    onClick={() => handleSaveEdit(idx)}
+                    onClick={handleSaveEdit}
                   >
                     Guardar
                   </button>
                   <button
                     className="text-gray-500"
-                    onClick={() => setEditIndex(null)}
+                    onClick={() => setEditId(null)}
                   >
                     Cancelar
                   </button>
                 </>
               ) : (
                 <>
-                  <span>{task}</span>
+                  <span>{task.title}</span>
                   <div>
                     <button
                       className="text-blue-600 mr-3"
-                      onClick={() => handleEditTask(idx)}
+                      onClick={() => handleEditTask(task)}
                     >
                       Editar
                     </button>
                     <button
                       className="text-red-600"
-                      onClick={() => handleDeleteTask(idx)}
+                      onClick={() => handleDeleteTask(task._id)}
                     >
                       Eliminar
                     </button>
@@ -127,6 +141,7 @@ export default function Dashboard({ onLogout }) {
             </li>
           ))}
         </ul>
+
         {tasks.length === 0 && (
           <div className="text-gray-400 text-center mt-4">No hay tareas aún.</div>
         )}
