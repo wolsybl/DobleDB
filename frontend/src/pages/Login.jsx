@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function Login() {
+export default function Login({ onGoToRegister }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -63,6 +63,13 @@ export default function Login() {
           className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition duration-300"
         >
           Iniciar sesión
+        </button>
+        <button
+          type="button"
+          className="w-full mt-4 bg-gray-200 text-blue-700 py-2 rounded-xl hover:bg-gray-300 transition duration-300"
+          onClick={onGoToRegister}
+        >
+          Crear cuenta
         </button>
       </form>
     </div>

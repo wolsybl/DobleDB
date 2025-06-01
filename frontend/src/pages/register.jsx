@@ -3,7 +3,7 @@ import axios from "axios";
 
 //pagina similar a login pero para registro de usuario
 
-export default function Register() {
+export default function Register({ onGoToLogin }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -92,6 +92,13 @@ export default function Register() {
           className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition duration-300"
         >
           Registrarse
+        </button>
+        <button
+          type="button"
+          className="w-full mt-4 bg-gray-200 text-blue-700 py-2 rounded-xl hover:bg-gray-300 transition duration-300"
+          onClick={onGoToLogin}
+        >
+          Volver a iniciar sesión
         </button>
       </form>
     </div>
