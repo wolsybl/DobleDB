@@ -15,8 +15,15 @@ router.get('/', async (req, res) => {
 
 // Crear una tarea asociada al usuario
 router.post('/', async (req, res) => {
-  const { title, description } = req.body;
-  const newTask = new Task({ title, description, userEmail: req.user.email });
+  const { title, description, priority, dueDate, status } = req.body;
+  const newTask = new Task({
+    title,
+    description,
+    priority,      // <-- ahora sí se guarda lo que envía el frontend
+    dueDate,
+    status,
+    userEmail: req.user.email
+  });
   await newTask.save();
   res.status(201).json(newTask);
 });
