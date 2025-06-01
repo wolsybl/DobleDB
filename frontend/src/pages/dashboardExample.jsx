@@ -153,11 +153,11 @@ export default function Dashboard({ onLogout }) {
         </div>
 
         {/* Carriles */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Pendiente */}
-          <div>
+          <div className="md:col-span-4 bg-yellow-50 rounded-xl border-2 border-yellow-300 p-2 min-h-[300px] flex flex-col">
             <h3 className="text-lg font-semibold mb-4 text-yellow-700 text-center">Pendiente</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1">
               {tasksByStatus(STATUS.PENDIENTE).length === 0 && (
                 <div className="text-gray-400 text-center">Sin tareas</div>
               )}
@@ -174,9 +174,9 @@ export default function Dashboard({ onLogout }) {
             </div>
           </div>
           {/* En proceso */}
-          <div>
+          <div className="md:col-span-4 bg-blue-50 rounded-xl border-2 border-blue-300 p-2 min-h-[300px] flex flex-col">
             <h3 className="text-lg font-semibold mb-4 text-blue-700 text-center">En proceso</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1">
               {tasksByStatus(STATUS.EN_PROCESO).length === 0 && (
                 <div className="text-gray-400 text-center">Sin tareas</div>
               )}
@@ -193,9 +193,9 @@ export default function Dashboard({ onLogout }) {
             </div>
           </div>
           {/* Completado */}
-          <div>
+          <div className="md:col-span-4 bg-green-50 rounded-xl border-2 border-green-300 p-2 min-h-[300px] flex flex-col">
             <h3 className="text-lg font-semibold mb-4 text-green-700 text-center">Completado</h3>
-            <div className="space-y-4">
+            <div className="space-y-4 flex-1">
               {tasksByStatus(STATUS.COMPLETADO).length === 0 && (
                 <div className="text-gray-400 text-center">Sin tareas</div>
               )}
