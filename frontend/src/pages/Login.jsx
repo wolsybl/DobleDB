@@ -11,12 +11,14 @@ export default function Login({ onGoToRegister, onLoginSuccess }) {
     setError("");
 
     try {
-      await axios.post("http://localhost:5000/api/auth/login", {
+      const res = await axios.post("http://localhost:5000/api/auth/login", {
         email,
         password,
       });
 
-      // Redirige al dashboard
+      // Guarda el token en localStorage
+      localStorage.setItem("token", res.data.token);
+
       if (onLoginSuccess) onLoginSuccess();
     } catch (err) {
       setError(err.response?.data?.message || "Error al iniciar sesión");

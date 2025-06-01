@@ -7,13 +7,19 @@ export default function Dashboard({ onLogout }) {
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
 
+  // Obtén el token del localStorage
+  const token = localStorage.getItem("token");
+
   // Cargar tareas al iniciar
   useEffect(() => {
     fetchTasks();
+    // eslint-disable-next-line
   }, []);
 
   const fetchTasks = async () => {
-    const res = await axios.get("http://localhost:5000/api/tasks");
+    const res = await axios.get("http://localhost:5000/api/tasks", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setTasks(res.data);
   };
 
@@ -21,15 +27,19 @@ export default function Dashboard({ onLogout }) {
     e.preventDefault();
     if (input.trim() === "") return;
 
-    const res = await axios.post("http://localhost:5000/api/tasks", {
-      title: input,
-    });
+    const res = await axios.post(
+      "http://localhost:5000/api/tasks",
+      { title: input },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
     setTasks([...tasks, res.data]);
     setInput("");
   };
 
   const handleDeleteTask = async (id) => {
-    await axios.delete(`http://localhost:5000/api/tasks/${id}`);
+    await axios.delete(`http://localhost:5000/api/tasks/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setTasks(tasks.filter((t) => t._id !== id));
   };
 
@@ -39,9 +49,11 @@ export default function Dashboard({ onLogout }) {
   };
 
   const handleSaveEdit = async () => {
-    const res = await axios.put(`http://localhost:5000/api/tasks/${editId}`, {
-      title: editValue,
-    });
+    const res = await axios.put(
+      `http://localhost:5000/api/tasks/${editId}`,
+      { title: editValue },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
 
     setTasks(tasks.map((t) => (t._id === editId ? res.data : t)));
     setEditId(null);
@@ -52,7 +64,10 @@ export default function Dashboard({ onLogout }) {
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 relative">
       <button
         className="absolute top-6 right-6 bg-white border border-gray-300 rounded-full p-2 shadow hover:bg-gray-50 transition"
-        onClick={onLogout}
+        onClick={() => {
+          localStorage.removeItem("token");
+          onLogout();
+        }}
         title="Cerrar sesión"
       >
         <svg

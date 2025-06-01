@@ -5,7 +5,8 @@ module.exports = (db) => {
     title: { type: String, required: true },
     description: String,
     completed: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    userEmail: { type: String, required: true }
   });
 
   return db.model('Task', taskSchema);
