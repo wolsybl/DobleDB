@@ -8,6 +8,7 @@ module.exports = (db) => {
     dueDate: Date,
     completed: { type: Boolean, default: false },
     createdAt: { type: Date, default: Date.now },
+    status: { type: String, default: "Pendiente" },
     userEmail: { type: String, required: true }
   });
 

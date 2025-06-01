@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+const STATUS = {
+  PENDIENTE: "Pendiente",
+  EN_PROCESO: "En proceso",
+  COMPLETADO: "Completado",
+};
+
 export default function Dashboard({ onLogout }) {
   const [tasks, setTasks] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -9,13 +15,12 @@ export default function Dashboard({ onLogout }) {
     description: "",
     priority: "Media",
     dueDate: "",
+    status: STATUS.PENDIENTE,
   });
   const [editId, setEditId] = useState(null);
 
-  // Obtén el token del localStorage
   const token = localStorage.getItem("token");
 
-  // Cargar tareas al iniciar
   useEffect(() => {
     fetchTasks();
     // eslint-disable-next-line
@@ -35,6 +40,7 @@ export default function Dashboard({ onLogout }) {
       description: "",
       priority: "Media",
       dueDate: "",
+      status: STATUS.PENDIENTE,
     });
     setEditId(null);
   };
@@ -87,9 +93,25 @@ export default function Dashboard({ onLogout }) {
       description: task.description,
       priority: task.priority,
       dueDate: task.dueDate ? task.dueDate.slice(0, 10) : "",
+      status: task.status || STATUS.PENDIENTE,
     });
     setShowModal(true);
   };
+
+  // Cambiar el estado de la tarea
+  const handleMoveTask = async (task, newStatus) => {
+    if (task.status === newStatus) return;
+    const updatedTask = { ...task, status: newStatus };
+    const res = await axios.put(
+      `http://localhost:5000/api/tasks/${task._id}`,
+      updatedTask,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setTasks(tasks.map((t) => (t._id === task._id ? res.data : t)));
+  };
+
+  // Agrupa tareas por estado
+  const tasksByStatus = (status) => tasks.filter((t) => (t.status || STATUS.PENDIENTE) === status);
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col items-center py-10 relative">
@@ -117,7 +139,7 @@ export default function Dashboard({ onLogout }) {
         </svg>
       </button>
 
-      <div className="bg-white p-8 rounded-2xl shadow-md w-full max-w-md">
+      <div className="w-full max-w-5xl">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-center text-gray-800 flex-1">
             Dashboard - To Do List
@@ -130,43 +152,66 @@ export default function Dashboard({ onLogout }) {
           </button>
         </div>
 
-        <ul>
-          {tasks.map((task) => (
-            <li
-              key={task._id}
-              className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 bg-gray-50 px-4 py-2 rounded-xl"
-            >
-              <div className="flex-1">
-                <div className="font-semibold">{task.title}</div>
-                <div className="text-sm text-gray-600">{task.description}</div>
-                <div className="text-xs text-gray-500">
-                  Prioridad: {task.priority || "Media"} |{" "}
-                  {task.dueDate
-                    ? `Límite: ${new Date(task.dueDate).toLocaleDateString()}`
-                    : ""}
-                </div>
-              </div>
-              <div className="flex mt-2 sm:mt-0">
-                <button
-                  className="text-blue-600 mr-3"
-                  onClick={() => handleEditTask(task)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="text-red-600"
-                  onClick={() => handleDeleteTask(task._id)}
-                >
-                  Eliminar
-                </button>
-              </div>
-            </li>
-          ))}
-        </ul>
-
-        {tasks.length === 0 && (
-          <div className="text-gray-400 text-center mt-4">No hay tareas aún.</div>
-        )}
+        {/* Carriles */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Pendiente */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-yellow-700 text-center">Pendiente</h3>
+            <div className="space-y-4">
+              {tasksByStatus(STATUS.PENDIENTE).length === 0 && (
+                <div className="text-gray-400 text-center">Sin tareas</div>
+              )}
+              {tasksByStatus(STATUS.PENDIENTE).map((task) => (
+                <TaskCard
+                  key={task._id}
+                  task={task}
+                  onEdit={handleEditTask}
+                  onDelete={handleDeleteTask}
+                  onMove={handleMoveTask}
+                  status={STATUS}
+                />
+              ))}
+            </div>
+          </div>
+          {/* En proceso */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-blue-700 text-center">En proceso</h3>
+            <div className="space-y-4">
+              {tasksByStatus(STATUS.EN_PROCESO).length === 0 && (
+                <div className="text-gray-400 text-center">Sin tareas</div>
+              )}
+              {tasksByStatus(STATUS.EN_PROCESO).map((task) => (
+                <TaskCard
+                  key={task._id}
+                  task={task}
+                  onEdit={handleEditTask}
+                  onDelete={handleDeleteTask}
+                  onMove={handleMoveTask}
+                  status={STATUS}
+                />
+              ))}
+            </div>
+          </div>
+          {/* Completado */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-green-700 text-center">Completado</h3>
+            <div className="space-y-4">
+              {tasksByStatus(STATUS.COMPLETADO).length === 0 && (
+                <div className="text-gray-400 text-center">Sin tareas</div>
+              )}
+              {tasksByStatus(STATUS.COMPLETADO).map((task) => (
+                <TaskCard
+                  key={task._id}
+                  task={task}
+                  onEdit={handleEditTask}
+                  onDelete={handleDeleteTask}
+                  onMove={handleMoveTask}
+                  status={STATUS}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Modal para nueva tarea o editar */}
@@ -227,6 +272,19 @@ export default function Dashboard({ onLogout }) {
                   onChange={handleInputChange}
                 />
               </div>
+              <div>
+                <label className="block text-gray-700 mb-1">Estado</label>
+                <select
+                  name="status"
+                  className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  value={newTask.status}
+                  onChange={handleInputChange}
+                >
+                  <option value={STATUS.PENDIENTE}>Pendiente</option>
+                  <option value={STATUS.EN_PROCESO}>En proceso</option>
+                  <option value={STATUS.COMPLETADO}>Completado</option>
+                </select>
+              </div>
               <button
                 type="submit"
                 className="w-full bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition duration-300"
@@ -237,6 +295,58 @@ export default function Dashboard({ onLogout }) {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// Componente para mostrar cada tarea y mover entre carriles
+function TaskCard({ task, onEdit, onDelete, onMove, status }) {
+  return (
+    <div className="bg-white rounded-xl shadow p-4 flex flex-col gap-2">
+      <div className="font-semibold">{task.title}</div>
+      <div className="text-sm text-gray-600">{task.description}</div>
+      <div className="text-xs text-gray-500">
+        Prioridad: {task.priority || "Media"}<br />
+        {task.dueDate ? `Límite: ${new Date(task.dueDate).toLocaleDateString()}` : ""}
+      </div>
+      <div className="flex gap-2 mt-2">
+        {task.status !== status.PENDIENTE && (
+          <button
+            className="px-2 py-1 bg-yellow-200 text-yellow-800 rounded hover:bg-yellow-300"
+            onClick={() => onMove(task, status.PENDIENTE)}
+          >
+            Pendiente
+          </button>
+        )}
+        {task.status !== status.EN_PROCESO && (
+          <button
+            className="px-2 py-1 bg-blue-200 text-blue-800 rounded hover:bg-blue-300"
+            onClick={() => onMove(task, status.EN_PROCESO)}
+          >
+            En proceso
+          </button>
+        )}
+        {task.status !== status.COMPLETADO && (
+          <button
+            className="px-2 py-1 bg-green-200 text-green-800 rounded hover:bg-green-300"
+            onClick={() => onMove(task, status.COMPLETADO)}
+          >
+            Completado
+          </button>
+        )}
+        <button
+          className="text-blue-600 ml-auto"
+          onClick={() => onEdit(task)}
+        >
+          Editar
+        </button>
+        <button
+          className="text-red-600"
+          onClick={() => onDelete(task._id)}
+        >
+          Eliminar
+        </button>
+      </div>
     </div>
   );
 }
