@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 
 export default function Login({ onGoToRegister }) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
@@ -12,7 +12,7 @@ export default function Login({ onGoToRegister }) {
 
     try {
       const res = await axios.post("http://localhost:5000/api/auth/login", {
-        username,
+        email,
         password,
       });
 
@@ -37,13 +37,14 @@ export default function Login({ onGoToRegister }) {
         )}
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Usuario</label>
+          <label className="block text-gray-700 mb-1">Correo electrónico</label>
           <input
-            type="text"
+            type="email"
             className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Nombre de usuario"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="ejemplo@correo.com"
+            required
           />
         </div>
 
@@ -55,6 +56,7 @@ export default function Login({ onGoToRegister }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
+            required
           />
         </div>
 

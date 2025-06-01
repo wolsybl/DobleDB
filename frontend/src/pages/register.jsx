@@ -4,7 +4,7 @@ import axios from "axios";
 //pagina similar a login pero para registro de usuario
 
 export default function Register({ onGoToLogin }) {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -22,11 +22,11 @@ export default function Register({ onGoToLogin }) {
 
     try {
       await axios.post("http://localhost:5000/api/auth/register", {
-        username,
+        email,
         password,
       });
       setSuccess("Registro exitoso. Ahora puedes iniciar sesión.");
-      setUsername("");
+      setEmail("");
       setPassword("");
       setConfirmPassword("");
     } catch (err) {
@@ -52,13 +52,13 @@ export default function Register({ onGoToLogin }) {
         )}
 
         <div className="mb-4">
-          <label className="block text-gray-700 mb-1">Usuario</label>
+          <label className="block text-gray-700 mb-1">Correo electrónico</label>
           <input
-            type="text"
+            type="email"
             className="w-full px-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Nombre de usuario"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="ejemplo@correo.com"
             required
           />
         </div>
