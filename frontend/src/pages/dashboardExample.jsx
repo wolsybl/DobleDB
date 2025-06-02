@@ -153,7 +153,7 @@ export default function Dashboard({ onLogout }) {
         </div>
 
         {/* Carriles */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
           {/* Pendiente */}
           <div className="md:col-span-4 bg-yellow-50 rounded-xl border-2 border-yellow-300 p-2 min-h-[300px] flex flex-col">
             <h3 className="text-lg font-semibold mb-4 text-yellow-700 text-center">Pendiente</h3>
@@ -309,11 +309,12 @@ function TaskCard({ task, onEdit, onDelete, onMove, status }) {
         Prioridad: {task.priority || "Media"}<br />
         {task.dueDate ? `Límite: ${new Date(task.dueDate).toLocaleDateString()}` : ""}
       </div>
-      <div className="flex gap-2 mt-2">
+      <div className="flex gap-2 mt-2 items-center">
         {task.status !== status.PENDIENTE && (
           <button
             className="px-2 py-1 bg-yellow-200 text-yellow-800 rounded hover:bg-yellow-300"
             onClick={() => onMove(task, status.PENDIENTE)}
+            title="Mover a Pendiente"
           >
             Pendiente
           </button>
@@ -322,29 +323,40 @@ function TaskCard({ task, onEdit, onDelete, onMove, status }) {
           <button
             className="px-2 py-1 bg-blue-200 text-blue-800 rounded hover:bg-blue-300"
             onClick={() => onMove(task, status.EN_PROCESO)}
+            title="Mover a En proceso"
           >
-            En proceso
+            Proceso
           </button>
         )}
         {task.status !== status.COMPLETADO && (
           <button
             className="px-2 py-1 bg-green-200 text-green-800 rounded hover:bg-green-300"
             onClick={() => onMove(task, status.COMPLETADO)}
+            title="Mover a Completado"
           >
             Completado
           </button>
         )}
+        <span className="flex-1" />
         <button
-          className="text-blue-600 ml-auto"
+          className="text-blue-600 ml-2 p-1 rounded hover:bg-blue-100"
           onClick={() => onEdit(task)}
+          title="Editar"
         >
-          Editar
+          {/* Icono de lápiz */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-2.828 0L9 13zm0 0V21h8" />
+          </svg>
         </button>
         <button
-          className="text-red-600"
+          className="text-red-600 ml-1 p-1 rounded hover:bg-red-100"
           onClick={() => onDelete(task._id)}
+          title="Eliminar"
         >
-          Eliminar
+          {/* Icono de basurero */}
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M8 7V4a1 1 0 011-1h6a1 1 0 011 1v3" />
+          </svg>
         </button>
       </div>
     </div>
