@@ -17,7 +17,7 @@ Aplicación web tipo **To-Do list** que permite a usuarios autenticados gestiona
 
 ## 📁 Estructura del proyecto
 
-- **backend/**: Contiene la lógica del servidor Express, modelos de Mongoose y rutas para autenticación y tareas.
+- **backend/**: Contiene la lógica del servidor Express, modelos de Mongoose, rutas para autenticación y tareas.
 - **frontend/**: Aplicación React creada con `create-react-app`, incluyendo componentes y archivos principales.
 - **docker-compose.yml**: Configuración de Docker Compose para levantar los servicios necesarios.
 - **.gitignore**: Archivos y carpetas ignorados por Git.
