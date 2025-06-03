@@ -48,6 +48,6 @@ Aplicación web tipo **To-Do list** que permite a usuarios autenticados gestiona
 
 3. **Acceder a la aplicación**
 
-Frontend: http://localhost:3000
+    Frontend: http://localhost:3000
 
-Backend: http://localhost:5000
+    Backend: http://localhost:5000
