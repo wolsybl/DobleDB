@@ -22,6 +22,7 @@ Aplicación web tipo **To-Do list** que permite a usuarios autenticados gestiona
 - **docker-compose.yml**: Configuración de Docker Compose para levantar los servicios necesarios.
 - **.gitignore**: Archivos y carpetas ignorados por Git.
 - **README.md**: Documentación del proyecto.
+- **Arquitectura.md**: Detalles sobre la arquitectura.
 
 ---
 
